@@ -1,0 +1,47 @@
+{
+    "name": "webpress/meta-manager",
+    "description": "Webpress meta manager",
+    "authors": [{
+        "name": "hieunn",
+        "email": "hieunn@vicoders.com"
+    }],
+    "autoload": {
+        "classmap": ["src/app/"],
+        "psr-4": {
+            "VCComponent\\Laravel\\Meta\\": "src/app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VCComponent\\Laravel\\Meta\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "webpress/core": "^3.1",
+        "cviebrock/eloquent-sluggable": "7.0.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "8.5.13",
+        "orchestra/testbench": "5.0.0",
+        "spatie/phpunit-watcher": "1.23.0"
+    },
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VCComponent\\Laravel\\Meta\\Providers\\MetaServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpunit --color=always"
+        ],
+        "test:watch": [
+            "vendor/bin/phpunit-watcher watch"
+        ],
+        "coverage": [
+            "vendor/bin/phpunit --coverage-html coverages"
+        ]
+    }
+}
