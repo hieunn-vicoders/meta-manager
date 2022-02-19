@@ -1,6 +1,6 @@
 <?php
 
-namespace VCComponent\Laravel\Tag\Providers;
+namespace VCComponent\Laravel\Meta\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use VCComponent\Laravel\Meta\Repositories\MetaRepository;

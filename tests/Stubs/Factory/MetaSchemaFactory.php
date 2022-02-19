@@ -10,6 +10,8 @@ $factory->define(MetaSchema::class, function (Faker $faker) {
     return [
         'label' => $label,
         'key' => $key,
+        'schema_rule_id' => rand(1, 5),
+        'schema_type_id' => rand(1, 9),
         'type'     => $faker->word,
     ];
 });

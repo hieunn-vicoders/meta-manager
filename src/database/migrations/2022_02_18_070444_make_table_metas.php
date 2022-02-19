@@ -18,7 +18,7 @@ class MakeTableMetas extends Migration
             $table->string('value');
             $table->unsignedBigInteger('schema_id');
             $table->foreign('schema_id')->references('id')->on('schemas')->onDelete('cascade');
-            $table->bigIncreaments('metable_id');
+            $table->unsignedBigInteger('metable_id');
             $table->string('metable_type');
             $table->timestamps();
         });

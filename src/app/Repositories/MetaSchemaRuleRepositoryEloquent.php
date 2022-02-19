@@ -31,7 +31,7 @@ class MetaSchemaRuleRepositoryEloquent extends BaseRepository implements MetaSch
     {
         return $this->model;
     }
-    public function findById($request, $id)
+    public function findById($id)
     {
         $meta_schema_rule = $this->find($id);
         if (!$meta_schema_rule) {

@@ -89,11 +89,11 @@ class MetaSchemaController extends ApiController
     {
         $this->validator->isValid($request, 'RULE_ADMIN_UPDATE');
 
-        $meta_schema_option_updating = $this->repository->findById($id);
+        $meta_schema = $this->repository->findById($id);
 
-        $meta_schema_option = $meta_schema_option_updating->update($request->all());
+        $meta_schema->update($request->all());
 
-        return $this->response->item($meta_schema_option, new $this->transformer);
+        return $this->response->item($meta_schema, new $this->transformer);
     }
 
     public function destroy($id)

@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
-use VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchema;
+use VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchemaOption;
 
-$factory->define(MetaSchema::class, function (Faker $faker) {
+$factory->define(MetaSchemaOption::class, function (Faker $faker) {
     $value = $faker->name;
     $key = Str::slug($value);
     return [

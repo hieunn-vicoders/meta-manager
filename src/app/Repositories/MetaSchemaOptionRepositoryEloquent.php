@@ -31,7 +31,7 @@ class MetaSchemaOptionRepositoryEloquent extends BaseRepository implements MetaS
     {
         return $this->model;
     }
-    public function findById($request, $id)
+    public function findById($id)
     {
         $meta_schema_option = $this->find($id);
         if (!$meta_schema_option) {

@@ -1,19 +1,11 @@
 <?php
 
-namespace VCComponent\Laravel\Post\Test;
+namespace VCComponent\Laravel\Meta\Test;
 
 use Cviebrock\EloquentSluggable\ServiceProvider;
 use Dingo\Api\Provider\LaravelServiceProvider;
-use Illuminate\Support\Facades\Route;
-use NF\Roles\RolesServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use VCComponent\Laravel\User\Entities\User;
-use VCComponent\Laravel\User\Providers\UserComponentEventProvider;
-use VCComponent\Laravel\User\Providers\UserComponentProvider;
-use VCComponent\Laravel\User\Providers\UserComponentRouteProvider;
-use VCComponent\Laravel\Category\Providers\CategoryServiceProvider;
-use VCComponent\Laravel\Tag\Providers\TagServiceProvider;
-use NF\Roles\Models\Role;
+use VCComponent\Laravel\Meta\Providers\MetaServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
@@ -22,23 +14,13 @@ class TestCase extends OrchestraTestCase
      *
      * @param  \Illuminate\Foundation\Application $app
      *
-     * @return \VCComponent\Laravel\Post\Providers\PostComponentProvider
      */
     protected function getPackageProviders($app)
     {
         return [
-            PostComponentProvider::class,
-            PostComponentRouteProvider::class,
             LaravelServiceProvider::class,
             ServiceProvider::class,
-            \Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
-            \Illuminate\Auth\AuthServiceProvider::class,
-            UserComponentEventProvider::class,
-            UserComponentProvider::class,
-            UserComponentRouteProvider::class,
-            RolesServiceProvider::class,
-            CategoryServiceProvider::class,
-            TagServiceProvider::class,
+            MetaServiceProvider::class
         ];
     }
 
@@ -48,8 +30,6 @@ class TestCase extends OrchestraTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->withFactories(__DIR__ . '/../src/database/factories');
         $this->withFactories(__DIR__ . '/../tests/Stubs/Factory');
     }
 
@@ -69,14 +49,22 @@ class TestCase extends OrchestraTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
-        $app['config']->set('post.namespace', 'post-management');
-        $app['config']->set('post.models', [
-            'post' => \VCComponent\Laravel\Post\Test\Stubs\Models\Post::class,
+        $app['config']->set('meta.namespace', 'meta-management');
+        $app['config']->set('meta.models', [
+            'meta' => \VCComponent\Laravel\Meta\Test\Stubs\Entities\Meta::class,
+            'meta-schema' => \VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchema::class,
+            'meta-schema-rule' => \VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchemaRule::class,
+            'meta-schema-type' => \VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchemaType::class,
+            'meta-schema-option' => \VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchemaOption::class,
         ]);
-        $app['config']->set('post.transformers', [
-            'post' => \VCComponent\Laravel\Post\Transformers\PostTransformer::class,
+        $app['config']->set('meta.transformers', [
+            'meta' => \VCComponent\Laravel\Meta\Transformers\MetaTransformer::class,
+            'meta-schema' => \VCComponent\Laravel\Meta\Transformers\MetaSchemaTransformer::class,
+            'meta-schema-rule' => \VCComponent\Laravel\Meta\Transformers\MetaSchemaRuleTransformer::class,
+            'meta-schema-type' => \VCComponent\Laravel\Meta\Transformers\MetaSchemaTypeTransformer::class,
+            'meta-schema-option' => \VCComponent\Laravel\Meta\Transformers\MetaSchemaOptionTransformer::class,
         ]);
-        $app['config']->set('post.auth_middleware', [
+        $app['config']->set('meta.auth_middleware', [
             'admin' => [
                 [
                     'middleware' => '',
@@ -124,11 +112,11 @@ class TestCase extends OrchestraTestCase
             ],
         ]);
         $app['config']->set('jwt.secret', '5jMwJkcDTUKlzcxEpdBRIbNIeJt1q5kmKWxa0QA2vlUEG6DRlxcgD7uErg51kbBl');
-        $app['config']->set('auth.providers.users.model', \VCComponent\Laravel\User\Entities\User::class);
-        $app['config']->set('user', ['namespace' => 'user-management']);
-        $app['config']->set('repository.cache.enabled', false);
-        $app['config']->set('roles.models.role', \NF\Roles\Models\Role::class);
-        $app['config']->set('roles.models.permission', \NF\Roles\Models\Permission::class);
+        // $app['config']->set('auth.providers.users.model', \VCComponent\Laravel\User\Entities\User::class);
+        // $app['config']->set('user', ['namespace' => 'user-management']);
+        // $app['config']->set('repository.cache.enabled', false);
+        // $app['config']->set('roles.models.role', \NF\Roles\Models\Role::class);
+        // $app['config']->set('roles.models.permission', \NF\Roles\Models\Permission::class);
 
     }
     public function assertExits($response, $error_message)

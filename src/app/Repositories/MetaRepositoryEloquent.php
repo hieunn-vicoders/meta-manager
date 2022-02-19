@@ -31,7 +31,7 @@ class MetaRepositoryEloquent extends BaseRepository implements MetaRepository
     {
         return $this->model;
     }
-    public function findById($request, $id)
+    public function findById($id)
     {
         $meta = $this->find($id);
         if (!$meta) {

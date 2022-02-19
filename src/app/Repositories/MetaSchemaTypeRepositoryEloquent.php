@@ -31,7 +31,7 @@ class MetaSchemaTypeRepositoryEloquent extends BaseRepository implements MetaSch
     {
         return $this->model;
     }
-    public function findById($request, $id)
+    public function findById($id)
     {
         $meta_schema_type = $this->find($id);
         if (!$meta_schema_type) {
