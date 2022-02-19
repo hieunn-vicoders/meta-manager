@@ -1,6 +1,6 @@
 {
-    "name": "webpress/meta-manager",
-    "description": "Webpress meta manager",
+    "name": "webpress/meta",
+    "description": "Adding additional meta data to resources",
     "authors": [{
         "name": "hieunn",
         "email": "hieunn@vicoders.com"
