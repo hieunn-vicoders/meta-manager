@@ -29,12 +29,12 @@ class MetaSchema extends Model
 
     public function rule()
     {
-        return $this->belongsTo(MetaSchemaRule::class);
+        return $this->belongsTo(MetaSchemaRule::class, 'schema_rule_id');
     }
 
     public function type()
     {
-        return $this->belongsTo(MetaSchemaType::class);
+        return $this->belongsTo(MetaSchemaType::class, 'schema_type_id');
     }
     
     public function options()
