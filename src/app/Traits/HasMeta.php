@@ -9,9 +9,9 @@ trait HasMeta
     public function metas()
     {
         if (isset(config('meta.models')['meta'])) {
-            return $this->morphMany(config('meta.models.meta'), 'metas');
+            return $this->morphMany(config('meta.models.meta'), 'metable');
         } else {
-            return $this->morphMany(Meta::class, 'metas');
+            return $this->morphMany(Meta::class, 'metable');
         }
     }
 }

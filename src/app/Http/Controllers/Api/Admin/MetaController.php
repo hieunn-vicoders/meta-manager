@@ -48,18 +48,24 @@ class MetaController extends ApiController
         $query = $this->applySearchFromRequest($query, ['key', 'value'], $request);
         $query = $this->applyOrderByFromRequest($query, $request);
 
+        if ($request->has('includes')) {
+            $transformer = new $this->transformer(explode(',', $request->get('includes')));
+        } else {
+            $transformer = new $this->transformer;
+        }
+
         if ($request->has('page')) 
         {
             $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
     
             $metas = $query->paginate($per_page);
     
-            return $this->response->paginator($metas, new $this->transformer());
+            return $this->response->paginator($metas, $transformer);
         }
 
         $metas = $query->get();
 
-        return $this->response->collection($metas, new $this->transformer());
+        return $this->response->collection($metas, $transformer);
     }
 
     public function show($id, Request $request)

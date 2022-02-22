@@ -46,18 +46,24 @@ class MetaSchemaOptionController extends ApiController
         $query = $this->applySearchFromRequest($query, ['name', 'label'], $request);
         $query = $this->applyOrderByFromRequest($query, $request);
 
+        if ($request->has('includes')) {
+            $transformer = new $this->transformer(explode(',', $request->get('includes')));
+        } else {
+            $transformer = new $this->transformer;
+        }
+
         if ($request->has('page')) 
         {
             $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
     
             $tags = $query->paginate($per_page);
     
-            return $this->response->paginator($tags, new $this->transformer());
+            return $this->response->paginator($tags, $transformer);
         }
 
         $tags = $query->get();
 
-        return $this->response->collection($tags, new $this->transformer());
+        return $this->response->collection($tags, $transformer);
     }
 
     public function show($id, Request $request)
