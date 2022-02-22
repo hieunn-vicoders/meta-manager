@@ -32,6 +32,22 @@ class MetaControllerTest extends TestCase
         $response->assertJson([
             'data' => $data
         ]);
+
+        $response = $this->get("api/admin/metas?include=schema.schemaType,schema.schemaRule,schema.schemaOptions");
+        $response->assertSuccessful();
+        $response->assertJsonStructure([
+            'data' => [
+                [
+                    'schema' => [
+                        'data' => [
+                            'schemaRule' => [],
+                            'schemaType' => [],
+                            'schemaOptions' => [] 
+                        ]
+                    ]
+                ]
+            ]
+        ]);
     }
 
     /**
@@ -80,7 +96,7 @@ class MetaControllerTest extends TestCase
     public function can_create_many_metas()
     {
         $metable_type = 'posts';
-        $meta_schema = factory(MetaSchema::class,2)->create(['type' => $metable_type]);
+        $meta_schema = factory(MetaSchema::class,2)->create(['type' => $metable_type, 'schema_rule_id' => 3]);
         $data = factory(Meta::class)->make([
             'metable_type' => $metable_type,
             'meta' => [
@@ -143,7 +159,7 @@ class MetaControllerTest extends TestCase
     public function can_update_many_metas()
     {
         $metable_type = 'posts';
-        $meta_schema = factory(MetaSchema::class,2)->create(['type' => $metable_type]);
+        $meta_schema = factory(MetaSchema::class,2)->create(['type' => $metable_type, 'schema_rule_id' => 3]);
         $data = factory(Meta::class)->make([
             'metable_type' => $metable_type,
             'meta' => [

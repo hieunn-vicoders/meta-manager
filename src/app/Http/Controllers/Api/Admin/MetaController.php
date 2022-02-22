@@ -148,7 +148,7 @@ class MetaController extends ApiController
 
         $this->mapRequestData($request, $schema_keys, $meta_values);
 
-        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('rule')->get();
+        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('schemaRule')->get();
 
         $this->validator->isSchemaValid($request, $meta_schemas);
 

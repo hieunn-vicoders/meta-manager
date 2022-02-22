@@ -28,7 +28,7 @@ class MetaValidator extends AbstractValidator
     public function isSchemaValid(Request $request, $meta_schemas)
     {
         $rules = $meta_schemas->map(function ($item) {
-            return [$item->key => $item->rule->name];
+            return [$item->key => $item->schemaRule->name];
         })->toArray();
 
         $validator = Validator::make($request->get('meta'), $rules);

@@ -2,6 +2,7 @@
 
 namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 
+use Exception;
 use Illuminate\Http\Request;
 use VCComponent\Laravel\Meta\Repositories\MetaSchemaOptionRepository;
 use VCComponent\Laravel\Meta\Transformers\MetaSchemaOptionTransformer;
