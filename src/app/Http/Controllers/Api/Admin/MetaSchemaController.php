@@ -45,38 +45,38 @@ class MetaSchemaController extends ApiController
         $query = $this->applyConstraintsFromRequest($query, $request);
         $query = $this->applySearchFromRequest($query, ['key', 'value'], $request);
         $query = $this->applyOrderByFromRequest($query, $request);
+        $query = $this->applyTypeFromRequest($query, $request);
 
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
         } else {
-            $transformer = new $this->transformer;
+            $transformer = new $this->transformer(['schemaRule', 'schemaType', 'schemaOptions']);
         }
 
-        if ($request->has('page')) 
-        {
+        if ($request->has('page')) {
             $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
-    
-            $meta_schema_options = $query->paginate($per_page);
-    
-            return $this->response->paginator($meta_schema_options, $transformer);
+
+            $meta_schemas = $query->paginate($per_page);
+
+            return $this->response->paginator($meta_schemas, $transformer);
         }
 
-        $meta_schema_options = $query->get();
+        $meta_schemas = $query->get();
 
-        return $this->response->collection($meta_schema_options, $transformer);
+        return $this->response->collection($meta_schemas, $transformer);
     }
 
     public function show($id, Request $request)
     {
-        $meta_schema_option = $this->repository->findById($id);
+        $meta_schema = $this->repository->findById($id);
 
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
         } else {
-            $transformer = new $this->transformer;
+            $transformer = new $this->transformer(['schemaRule', 'schemaType', 'schemaOptions']);
         }
 
-        return $this->response->item($meta_schema_option, $transformer);
+        return $this->response->item($meta_schema, $transformer);
     }
 
     public function store(Request $request)
@@ -85,9 +85,9 @@ class MetaSchemaController extends ApiController
 
         $data = $request->all();
 
-        $meta_schema_option = $this->repository->create($data);
+        $meta_schema = $this->repository->create($data);
 
-        return $this->response->item($meta_schema_option, new $this->transformer);
+        return $this->response->item($meta_schema, new $this->transformer);
     }
 
     public function update(Request $request, $id)
@@ -108,5 +108,13 @@ class MetaSchemaController extends ApiController
         $meta_schema->delete();
 
         return $this->success();
+    }
+
+    protected function applyTypeFromRequest($query, Request $request)
+    {
+        if ($request->has('type')) {
+            $query = $query->where('type', $request->get('type'));
+        }
+        return $query;
     }
 }
