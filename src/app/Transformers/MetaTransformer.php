@@ -7,6 +7,15 @@ use League\Fractal\TransformerAbstract;
 class MetaTransformer extends TransformerAbstract
 {
 
+    protected $availableIncludes = [
+        'schema'
+    ];
+
+    public function __construct($includes = [])
+    {
+        $this->setDefaultIncludes($includes);
+    }
+
     public function transform($model)
     {
         return [
@@ -20,5 +29,12 @@ class MetaTransformer extends TransformerAbstract
                 'updated_at' => $model->updated_at,
             ],
         ];
+    }
+
+    public function includeSchema($model)
+    {
+        if ($model->schema) {
+            return $this->item($model->schema, new MetaSchemaTransformer());
+        }
     }
 }
