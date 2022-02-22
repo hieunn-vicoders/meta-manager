@@ -9,9 +9,9 @@ use VCComponent\Laravel\Meta\Transformers\MetaSchemaTypeTransformer;
 class MetaSchemaTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'rule',
-        'type',
-        'options'
+        'schemaRule',
+        'schemaType',
+        'schemaOptions'
     ];
 
     public function __construct($includes = [])
@@ -35,24 +35,24 @@ class MetaSchemaTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeType($model)
+    public function includeSchemaType($model)
     {
-        if ($model->type) {
-            return $this->item($model->type, new MetaSchemaTypeTransformer());
+        if ($model->schemaType) {
+            return $this->item($model->schemaType, new MetaSchemaTypeTransformer());
         }
     }
 
-    public function includeRule($model)
+    public function includeSchemaRule($model)
     {
-        if ($model->rule) {
-            return $this->item($model->rule, new MetaSchemaRuleTransformer());
+        if ($model->schemaRule) {
+            return $this->item($model->schemaRule, new MetaSchemaRuleTransformer());
         }
     }
 
-    public function includeOptions($model)
+    public function includeSchemaOptions($model)
     {
-        if ($model->options) {
-            return $this->collection($model->options, new MetaSchemaOptionTransformer());
+        if ($model->schemaOptions) {
+            return $this->collection($model->schemaOptions, new MetaSchemaOptionTransformer());
         }
     }
 }

@@ -70,7 +70,7 @@ class MetaController extends ApiController
 
     public function show($id, Request $request)
     {
-        $meta_schema_option = $this->repository->findById($id);
+        $meta = $this->repository->findById($id);
 
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
@@ -78,7 +78,7 @@ class MetaController extends ApiController
             $transformer = new $this->transformer;
         }
 
-        return $this->response->item($meta_schema_option, $transformer);
+        return $this->response->item($meta, $transformer);
     }
 
     public function store(Request $request)
@@ -118,9 +118,9 @@ class MetaController extends ApiController
     {
         $this->validator->isValid($request, 'HAS_VALUE');
 
-        $meta_schema_option = $this->repository->create($request->all());
+        $meta = $this->repository->create($request->all());
 
-        return $this->response->item($meta_schema_option, new $this->transformer);
+        return $this->response->item($meta, new $this->transformer);
     }
 
     protected function updateSimpleData(Request $request, $id)
@@ -148,7 +148,7 @@ class MetaController extends ApiController
 
         $this->mapRequestData($request, $schema_keys, $meta_values);
 
-        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('rule')->get();
+        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('schemaRule')->get();
 
         $this->validator->isSchemaValid($request, $meta_schemas);
 

@@ -2,6 +2,7 @@
 
 namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 
+use Exception;
 use Illuminate\Http\Request;
 use VCComponent\Laravel\Meta\Repositories\MetaSchemaOptionRepository;
 use VCComponent\Laravel\Meta\Transformers\MetaSchemaOptionTransformer;
@@ -68,7 +69,7 @@ class MetaSchemaOptionController extends ApiController
 
     public function show($id, Request $request)
     {
-        $meta_schema = $this->repository->findById($id);
+        $meta_schema_option = $this->repository->findById($id);
 
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
@@ -76,7 +77,7 @@ class MetaSchemaOptionController extends ApiController
             $transformer = new $this->transformer;
         }
 
-        return $this->response->item($meta_schema, $transformer);
+        return $this->response->item($meta_schema_option, $transformer);
     }
 
     public function store(Request $request)
@@ -84,27 +85,27 @@ class MetaSchemaOptionController extends ApiController
         $this->validator->isValid($request, 'RULE_ADMIN_CREATE');
 
         $data = $request->all();
-        $meta_schema = $this->repository->create($data);
+        $meta_schema_option = $this->repository->create($data);
 
-        return $this->response->item($meta_schema, new $this->transformer);
+        return $this->response->item($meta_schema_option, new $this->transformer);
     }
 
     public function update(Request $request, $id)
     {
         $this->validator->isValid($request, 'RULE_ADMIN_UPDATE');
 
-        $meta_schema = $this->repository->findById($id);
+        $meta_schema_option = $this->repository->findById($id);
 
-        $meta_schema->update($request->all());
+        $meta_schema_option->update($request->all());
 
-        return $this->response->item($meta_schema, new $this->transformer);
+        return $this->response->item($meta_schema_option, new $this->transformer);
     }
 
     public function destroy($id)
     {
-        $meta_schema = $this->repository->findById($id);
+        $meta_schema_option = $this->repository->findById($id);
 
-        $meta_schema->delete();
+        $meta_schema_option->delete();
 
         return $this->success();
     }

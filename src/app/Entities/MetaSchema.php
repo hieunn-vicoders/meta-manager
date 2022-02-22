@@ -27,18 +27,18 @@ class MetaSchema extends Model
         ];
     }
 
-    public function rule()
+    public function schemaRule()
     {
         return $this->belongsTo(MetaSchemaRule::class, 'schema_rule_id');
     }
 
-    public function type()
+    public function schemaType()
     {
         return $this->belongsTo(MetaSchemaType::class, 'schema_type_id');
     }
     
-    public function options()
+    public function schemaOptions()
     {
-        return $this->hasMany(MetaSchemaOption::class);
+        return $this->hasMany(MetaSchemaOption::class, 'schema_id');
     }
 }
