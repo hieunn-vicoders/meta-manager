@@ -112,7 +112,6 @@ class MetaControllerTest extends TestCase
 
         $response = $this->post("api/admin/metas", $data);
         $response->assertSuccessful();
-
         $response->assertJson([
             'success' => true
         ]);

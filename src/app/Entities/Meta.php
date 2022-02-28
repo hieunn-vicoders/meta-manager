@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class Meta extends Model
 {
-
     protected $fillable = [
         'schema_id',
         'key',

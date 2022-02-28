@@ -143,10 +143,8 @@ class MetaController extends ApiController
 
     protected function storeManyData(Request $request)
     {
-        $schema_keys = [];
-        $meta_values = [];
-
-        $this->mapRequestData($request, $schema_keys, $meta_values);
+        $meta_values = $this->mapRequestData($request);
+        $schema_keys = array_keys($meta_values);
 
         $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('schemaRules')->get();
 
@@ -159,12 +157,11 @@ class MetaController extends ApiController
         return $this->success();
     }
 
-    protected function mapRequestData($request, array &$schema_keys, array &$meta_values)
+    protected function mapRequestData($request)
     {
-        collect($request->get('meta'))->each(function ($value, $key) use (&$schema_keys, &$meta_values) {
-            array_push($schema_keys, $key);
-            $meta_values = array_merge($meta_values, [$key => $value]);
-        });
+        return collect($request->get('meta'))->mapWithKeys(function ($value, $key) {
+            return [$key => $value];
+        })->toArray();
     }
 
     protected function mapMetaData($request, $meta_schemas, $meta_values)
