@@ -5,11 +5,11 @@ namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 use Exception;
 use Illuminate\Http\Request;
 use LDAP\Result;
+use VCComponent\Laravel\Meta\Entities\MetaSchema;
 use VCComponent\Laravel\Meta\Repositories\MetaRepository;
 use VCComponent\Laravel\Meta\Transformers\MetaTransformer;
 use VCComponent\Laravel\Meta\Validators\MetaValidator;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
-use VCComponent\Laravel\Meta\Test\Stubs\Entities\MetaSchema;
 
 class MetaController extends ApiController
 {
@@ -148,7 +148,7 @@ class MetaController extends ApiController
 
         $this->mapRequestData($request, $schema_keys, $meta_values);
 
-        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('schemaRule')->get();
+        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)->where('type', $request->get('metable_type'))->with('schemaRules')->get();
 
         $this->validator->isSchemaValid($request, $meta_schemas);
 

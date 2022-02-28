@@ -13,7 +13,6 @@ class MetaSchema extends Model
     protected $fillable = [
         'key',
         'label',
-        'schema_rule_id',
         'schema_type_id',
         'type'
     ];
@@ -27,9 +26,13 @@ class MetaSchema extends Model
         ];
     }
 
-    public function schemaRule()
+    public function schemaRules()
     {
-        return $this->belongsTo(MetaSchemaRule::class, 'schema_rule_id');
+        if (isset(config('meta.models')['meta-schema-rule'])) {
+            return $this->belongsToMany(config('meta.models.meta-schema-rule'), 'meta_schema_ruleables', 'schema_rule_id', 'schema_id');
+        } else {
+            return $this->belongsToMany(MetaSchemaRule::class, 'metable', 'meta_schema_ruleables', 'schema_rule_id', 'schema_id');
+        }
     }
 
     public function schemaType()

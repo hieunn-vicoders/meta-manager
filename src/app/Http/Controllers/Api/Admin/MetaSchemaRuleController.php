@@ -1,6 +1,6 @@
 <?php
 
-namespace VCComponent\Laravel\Tag\Http\Controllers\Api\Admin;
+namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 
 use Exception;
 use Illuminate\Http\Request;

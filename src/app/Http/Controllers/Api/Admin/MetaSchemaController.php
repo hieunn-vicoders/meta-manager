@@ -50,7 +50,7 @@ class MetaSchemaController extends ApiController
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
         } else {
-            $transformer = new $this->transformer(['schemaRule', 'schemaType', 'schemaOptions']);
+            $transformer = new $this->transformer(['schema_rules', 'schema_type', 'schema_options']);
         }
 
         if ($request->has('page')) {
@@ -73,7 +73,7 @@ class MetaSchemaController extends ApiController
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
         } else {
-            $transformer = new $this->transformer(['schemaRule', 'schemaType', 'schemaOptions']);
+            $transformer = new $this->transformer(['schema_rules', 'schema_type', 'schema_options']);
         }
 
         return $this->response->item($meta_schema, $transformer);
