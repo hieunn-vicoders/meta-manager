@@ -16,7 +16,7 @@ class CreateMetaSchemaRuleDatas extends Migration
     {
         collect([
             [
-                "name" => "E-mail",
+                "name" => "Email",
             ],
             [
                 "name" => "Date",

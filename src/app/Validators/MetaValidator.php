@@ -5,7 +5,7 @@ namespace VCComponent\Laravel\Meta\Validators;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use VCComponent\Laravel\Meta\Entities\MetaSchema;
+use Illuminate\Validation\ValidationException;
 use VCComponent\Laravel\Vicoders\Core\Validators\AbstractValidator;
 
 class MetaValidator extends AbstractValidator
@@ -27,13 +27,14 @@ class MetaValidator extends AbstractValidator
 
     public function isSchemaValid(Request $request, $meta_schemas)
     {
-        $rules = $meta_schemas->map(function ($item) {
-            return [$item->key => $item->schemaRule->name];
+        $rules = $meta_schemas->mapWithKeys(function ($item) {
+            return [$item->key => $item->schemaRules->pluck('name')->toArray()];
         })->toArray();
 
         $validator = Validator::make($request->get('meta'), $rules);
+
         if ($validator->fails()) {
-            throw new Exception($validator->errors(), 402);
+            throw ValidationException::withMessages($validator->errors()->messages());
         }
         return true;
     }

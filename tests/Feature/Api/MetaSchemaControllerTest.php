@@ -36,9 +36,9 @@ class MetaSchemaControllerTest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 [
-                    'schemaRule' => [],
-                    'schemaType' => [],
-                    'schemaOptions' => []
+                    'schema_rules' => [],
+                    'schema_type' => [],
+                    'schema_options' => []
                 ]
             ]
         ]);
