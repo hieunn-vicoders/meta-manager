@@ -46,30 +46,16 @@ class MetaController extends ApiController
         $this->validator->isValid($request, 'CREATE_META');
 
         $query = $this->entity;
-
-        $query = $this->applyConstraintsFromRequest($query, $request);
-        $query = $this->applySearchFromRequest($query, ['key', 'value'], $request);
-        $query = $this->applyOrderByFromRequest($query, $request);
-        $query = $this->applyMetableId($query, $request);
-        $query = $this->applyMetableType($query, $request);
-
-        if ($request->has('includes')) {
-            $transformer = new $this->transformer(explode(',', $request->get('includes')));
-        } else {
-            $transformer = new $this->transformer(['schema']);
-        }
-
-        if ($request->has('page')) {
-            $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
-
-            $metas = $query->paginate($per_page);
-
-            return $this->response->paginator($metas, $transformer);
-        }
-
-        $metas = $query->get();
-
-        return $this->response->collection($metas, $transformer);
+        
+        $metable_id = $request->get('metable_id');
+        
+        $metable_type = $request->get('metable_type');
+        
+        $result = $query->where('metable_id', $metable_id)->where('metable_type', $metable_type)->get();
+        
+        $transformer = new $this->transformer(['schema']);
+        
+        return $this->response->collection($result, $transformer);
     }
 
     public function show($id, Request $request)
