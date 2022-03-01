@@ -22,6 +22,10 @@ class MetaValidator extends AbstractValidator
         'HAS_VALUE' => [
             'value' => ['required'],
             'schema_id' => ['required'],
+        ],
+        'CREATE_META' => [
+            'metable_id' => ['required'],
+            'metable_type' => ['required'],
         ]
     ];
 

@@ -31,7 +31,7 @@ class MetaSchema extends Model
         if (isset(config('meta.models')['meta-schema-rule'])) {
             return $this->belongsToMany(config('meta.models.meta-schema-rule'), 'meta_schema_ruleables', 'schema_rule_id', 'schema_id');
         } else {
-            return $this->belongsToMany(MetaSchemaRule::class, 'metable', 'meta_schema_ruleables', 'schema_rule_id', 'schema_id');
+            return $this->belongsToMany(MetaSchemaRule::class, 'meta_schema_ruleables', 'schema_rule_id', 'schema_id');
         }
     }
 
