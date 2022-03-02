@@ -2,29 +2,16 @@
 
 namespace VCComponent\Laravel\Meta\Entities;
 
-use Cviebrock\EloquentSluggable\Sluggable;
-use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class MetaSchema extends Model
 {
-    use Sluggable, SluggableScopeHelpers;
-
     protected $fillable = [
         'key',
         'label',
         'schema_type_id',
         'metable_type'
     ];
-
-    public function sluggable()
-    {
-        return [
-            'key' => [
-                'source' => 'label',
-            ],
-        ];
-    }
 
     public function schemaRules()
     {

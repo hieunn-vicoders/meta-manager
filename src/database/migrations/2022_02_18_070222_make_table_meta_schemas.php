@@ -17,11 +17,9 @@ class MakeTableMetaSchemas extends Migration
             $table->bigIncrements('id');
             $table->string('key');
             $table->string('label');
-            $table->unsignedBigInteger('schema_rule_id');
-            $table->foreign('schema_rule_id')->references('id')->on('meta_schema_rules')->onDelete('cascade');
             $table->unsignedBigInteger('schema_type_id');
             $table->foreign('schema_type_id')->references('id')->on('meta_schema_types')->onDelete('cascade');
-            $table->string('type');
+            $table->string('metable_type');
             $table->timestamps();
         });
     }

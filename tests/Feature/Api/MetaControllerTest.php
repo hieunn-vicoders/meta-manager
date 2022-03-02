@@ -17,7 +17,7 @@ class MetaControllerTest extends TestCase
     public function can_get_metas_list()
     {
         $data = factory(Meta::class, 3)->create([
-            'schema_id' => factory(MetaSchema::class)->create()->id
+            'key' => factory(MetaSchema::class)->create()->key
         ])->each(function ($item) {
             unset($item['created_at']);
             unset($item['updated_at']);
@@ -64,7 +64,7 @@ class MetaControllerTest extends TestCase
     public function can_get_meta_detail()
     {
         $data = factory(Meta::class)->create([
-            'schema_id' => factory(MetaSchema::class)->create()->id
+            'key' => factory(MetaSchema::class)->create()->key
         ])->toArray();
 
         unset($data['created_at']);
@@ -84,9 +84,9 @@ class MetaControllerTest extends TestCase
     {
         $metable_type = 'fake_metable_type';
         $data = factory(Meta::class, 3)->create([
-            'schema_id' => factory(MetaSchema::class)->create([
+            'key' => factory(MetaSchema::class)->create([
                 'metable_type' => 'fake_metable_type',
-            ])->id,
+            ])->key,
             'metable_type' => 'fake_metable_type',
         ])->each(function ($item) {
             unset($item['created_at']);
@@ -106,136 +106,10 @@ class MetaControllerTest extends TestCase
     /**
      * @test
      */
-    public function can_create_a_meta()
-    {
-        $data = factory(Meta::class)->make([
-            'schema_id' => factory(MetaSchema::class)->create()->id
-        ])->toArray();
-
-        unset($data['created_at']);
-        unset($data['updated_at']);
-
-        $response = $this->post("api/admin/metas", $data);
-        // $response->assertSuccessful();
-        $response->assertJson([
-            'data' => $data
-        ]);
-
-        $this->assertDatabaseHas('metas', $data);
-    }
-
-    /**
-     * @test
-     */
-    public function can_create_many_metas()
-    {
-        $metable_type = 'posts';
-        $meta_schema = factory(MetaSchema::class, 2)->create(['metable_type' => $metable_type])->each(function ($item) {
-            $item->schemaRules()->attach([3]);
-        });
-        $data = factory(Meta::class)->make([
-            'metable_type' => $metable_type,
-            'meta' => [
-                $meta_schema[0]->key => 'value_1',
-                $meta_schema[1]->key => 'value_2',
-            ]
-        ])->toArray();
-
-        unset($data['created_at']);
-        unset($data['updated_at']);
-
-        $response = $this->post("api/admin/metas", $data);
-        $response->assertSuccessful();
-        $response->assertJson([
-            'success' => true
-        ]);
-
-        $data = collect($data['meta'])->values()->map(function ($item, $key) use ($data) {
-            return [
-                'value' => $item,
-                'metable_id' => "" . $data['metable_id'],
-                'metable_type' => $data['metable_type'],
-            ];
-            $this->assertDatabaseHas('metas', [
-                'value' => $item,
-                'metable_id' => $data['metable_id'],
-                'metable_type' => $data['metable_type'],
-            ]);
-        })->toArray();
-    }
-
-    /**
-     * @test
-     */
-    public function can_update_meta()
-    {
-        $data = factory(Meta::class)->create([
-            'schema_id' => factory(MetaSchema::class)->create()->id
-        ])->toArray();
-
-        unset($data['created_at']);
-        unset($data['updated_at']);
-
-        $update_data = factory(Meta::class)->make([
-            'schema_id' => factory(MetaSchema::class)->create()->id
-        ])->toArray();
-
-        $response = $this->put("api/admin/metas/" . $data['id'], $update_data);
-        $response->assertSuccessful();
-        $response->assertJson([
-            'data' => $update_data
-        ]);
-
-        $this->assertDatabaseHas('metas', $update_data);
-    }
-
-    /**
-     * @test
-     */
-    public function can_update_many_metas()
-    {
-        $metable_type = 'posts';
-        $meta_schema = factory(MetaSchema::class, 2)->create(['metable_type' => $metable_type]);
-        $data = factory(Meta::class)->make([
-            'metable_type' => $metable_type,
-            'meta' => [
-                $meta_schema[0]->key => 'value_1',
-                $meta_schema[1]->key => 'value_2',
-            ]
-        ])->toArray();
-
-        $data = factory(Meta::class)->make([
-            'metable_type' => $metable_type,
-            'meta' => [
-                $meta_schema[0]->key => 'new_value_1',
-            ]
-        ])->toArray();
-
-        unset($data['created_at']);
-        unset($data['updated_at']);
-
-        $response = $this->put("api/admin/metas", $data);
-        // $response->assertSuccessful();
-        $response->assertJson([
-            'success' => true
-        ]);
-
-        $data = collect($data['meta'])->values()->map(function ($item, $key) use ($data) {
-            $this->assertDatabaseHas('metas', [
-                'value' => $item,
-                'metable_id' => $data['metable_id'],
-                'metable_type' => $data['metable_type'],
-            ]);
-        })->toArray();
-    }
-
-    /**
-     * @test
-     */
     public function can_delete_meta()
     {
         $data = factory(Meta::class)->create([
-            'schema_id' => factory(MetaSchema::class)->create()->id
+            'key' => factory(MetaSchema::class)->create()->key
         ])->toArray();
 
         unset($data['created_at']);
@@ -258,8 +132,6 @@ class MetaControllerTest extends TestCase
                 'metable_type' => $metable_type,
             ]);
             $item['metable_type'] = $metable_type;
-            $item['schema_id'] = $meta_schema->id;
-
             $item['key'] = $meta_schema->key;
             $value['value'] = 'update value';
         })->toArray();
