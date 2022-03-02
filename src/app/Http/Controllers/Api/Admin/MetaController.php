@@ -5,8 +5,6 @@ namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use VCComponent\Laravel\Meta\Entities\Meta;
 use VCComponent\Laravel\Meta\Entities\MetaSchema;
 use VCComponent\Laravel\Meta\Repositories\MetaRepository;
 use VCComponent\Laravel\Meta\Transformers\MetaTransformer;
@@ -20,6 +18,7 @@ class MetaController extends ApiController
     protected $entity;
     protected $validator;
     protected $transformer;
+    protected $meta_schema;
 
     public function __construct(MetaRepository $repository, MetaValidator $validator)
     {
@@ -40,6 +39,12 @@ class MetaController extends ApiController
             $this->transformer = config('meta.transformers.meta');
         } else {
             $this->transformer = MetaTransformer::class;
+        }
+
+        if (isset(config('meta.model')['meta-schema'])) {
+            $this->meta_schema = config('meta.model.meta-schema');
+        } else {
+            $this->meta_schema = MetaSchema::class;
         }
     }
 
@@ -145,7 +150,7 @@ class MetaController extends ApiController
         $meta_values = $request->get('meta');
         $schema_keys = array_keys($meta_values);
 
-        $meta_schemas = MetaSchema::whereIn('key', $schema_keys)
+        $meta_schemas = $this->meta_schema::whereIn('key', $schema_keys)
             ->where('metable_type', $request->get('metable_type'))
             ->with('schemaRules')->get();
 
@@ -182,7 +187,7 @@ class MetaController extends ApiController
 
         DB::transaction(function () use ($meta) {
             foreach ($meta as $item) {
-                $schema = MetaSchema::where('key', $item['key'])->where('metable_type', $item['metable_type'])->firstOrFail();
+                $schema = $this->meta_schema::where('key', $item['key'])->where('metable_type', $item['metable_type'])->firstOrFail();
                 
                 $this->validator->isValidRule(
                     [$schema->key => $item['value']],
