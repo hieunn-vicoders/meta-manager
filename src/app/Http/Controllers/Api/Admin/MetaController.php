@@ -48,15 +48,15 @@ class MetaController extends ApiController
         $this->validator->isValid($request, 'GET_META');
 
         $query = $this->entity;
-
+        
         $metable_id = $request->get('metable_id');
-
+        
         $metable_type = $request->get('metable_type');
-
+        
         $result = $query->where('metable_id', $metable_id)->where('metable_type', $metable_type)->get();
-
+        
         $transformer = new $this->transformer(['schema']);
-
+        
         return $this->response->collection($result, $transformer);
     }
 
