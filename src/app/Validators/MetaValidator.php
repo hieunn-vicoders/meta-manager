@@ -23,7 +23,7 @@ class MetaValidator extends AbstractValidator
             'value' => ['required'],
             'schema_id' => ['required'],
         ],
-        'CREATE_META' => [
+        'GET_META' => [
             'metable_id' => ['required'],
             'metable_type' => ['required'],
         ]
@@ -35,11 +35,17 @@ class MetaValidator extends AbstractValidator
             return [$item->key => $item->schemaRules->pluck('name')->toArray()];
         })->toArray();
 
-        $validator = Validator::make($request->get('meta'), $rules);
+        return $this->isValidRule($request->get('meta'), $rules);
+    }
+
+    public function isValidRule($data, $rules)
+    {
+        $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages($validator->errors()->messages());
         }
+
         return true;
     }
 }

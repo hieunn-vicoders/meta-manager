@@ -27,7 +27,7 @@ class MetaSchemaTransformer extends TransformerAbstract
             'label'             => $model->label,
             'schema_type_id'    => $model->schema_type_id,
             'schema_rule_id'    => $model->schema_rule_id,
-            'type'              => $model->type,
+            'metable_type'      => $model->metable_type,
             'timestamps'     => [
                 'created_at' => $model->created_at,
                 'updated_at' => $model->updated_at,

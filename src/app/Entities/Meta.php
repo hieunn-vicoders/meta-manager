@@ -42,25 +42,14 @@ class Meta extends Model
     {
         if ($model->key && !$model->schema_id) {
             try {
-                if (is_subclass_of($model->metable_type, Model::class))
-                    $schema = MetaSchema::firstOrCreate([
-                        'key' => $model->key,
-                        'type' => Str::singular((new $model->metable_type())->getTable()),
-                    ], [
-                        'schema_type_id' => 1,
-                        'schema_rule_id' => 3,
-                    ]);
-                else
-                    $schema = MetaSchema::firstOrCreate([
-                        'key' => $model->key,
-                        'type' => Str::singular($model->metable_type),
-                    ], [
-                        'schema_type_id' => 1,
-                        'schema_rule_id' => 3,
-                    ]);
+                $schema = MetaSchema::firstOrCreate([
+                    'key' => $model->key,
+                    'type' => $model->metable_type,
+                ], [
+                    'schema_type_id' => 1,
+                ]);
 
                 $model->schema_id = $schema->id;
-
             } catch (\Exception $e) {
                 throw $e;
             }

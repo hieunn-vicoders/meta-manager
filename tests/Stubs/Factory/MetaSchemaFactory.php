@@ -11,6 +11,6 @@ $factory->define(MetaSchema::class, function (Faker $faker) {
         'label' => $label,
         'key' => $key,
         'schema_type_id' => rand(1, 9),
-        'type'     => $faker->word,
+        'metable_type'     => $faker->word,
     ];
 });

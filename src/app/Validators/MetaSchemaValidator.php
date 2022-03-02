@@ -10,12 +10,12 @@ class MetaSchemaValidator extends AbstractValidator
         'RULE_ADMIN_CREATE' => [
             'label'          => ['required'],
             'schema_type_id' => ['required'],
-            'type'      => ['required'],
+            'metable_type'      => ['required'],
         ],
         'RULE_ADMIN_UPDATE' => [
             'label'          => ['required'],
             'schema_type_id' => ['required'],
-            'type'      => ['required'],
+            'metable_type'      => ['required'],
         ],
     ];
 }

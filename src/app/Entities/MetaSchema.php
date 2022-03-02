@@ -14,7 +14,7 @@ class MetaSchema extends Model
         'key',
         'label',
         'schema_type_id',
-        'type'
+        'metable_type'
     ];
 
     public function sluggable()

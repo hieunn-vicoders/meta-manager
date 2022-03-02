@@ -4,6 +4,7 @@ namespace VCComponent\Laravel\Meta\Http\Controllers\Api\Admin;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use VCComponent\Laravel\Meta\Entities\Meta;
 use VCComponent\Laravel\Meta\Entities\MetaSchema;
@@ -11,6 +12,7 @@ use VCComponent\Laravel\Meta\Repositories\MetaRepository;
 use VCComponent\Laravel\Meta\Transformers\MetaTransformer;
 use VCComponent\Laravel\Meta\Validators\MetaValidator;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
+use VCComponent\Laravel\Vicoders\Core\Exceptions\NotFoundException;
 
 class MetaController extends ApiController
 {
@@ -43,46 +45,41 @@ class MetaController extends ApiController
 
     public function index(Request $request)
     {
-        $this->validator->isValid($request, 'CREATE_META');
+        $this->validator->isValid($request, 'GET_META');
 
         $query = $this->entity;
 
-        $query = $this->applyConstraintsFromRequest($query, $request);
-        $query = $this->applySearchFromRequest($query, ['key', 'value'], $request);
-        $query = $this->applyOrderByFromRequest($query, $request);
-        $query = $this->applyMetableId($query, $request);
-        $query = $this->applyMetableType($query, $request);
+        $metable_id = $request->get('metable_id');
 
-        if ($request->has('includes')) {
-            $transformer = new $this->transformer(explode(',', $request->get('includes')));
-        } else {
-            $transformer = new $this->transformer(['schema']);
-        }
+        $metable_type = $request->get('metable_type');
 
-        if ($request->has('page')) {
-            $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
+        $result = $query->where('metable_id', $metable_id)->where('metable_type', $metable_type)->get();
 
-            $metas = $query->paginate($per_page);
+        $transformer = new $this->transformer(['schema']);
 
-            return $this->response->paginator($metas, $transformer);
-        }
-
-        $metas = $query->get();
-
-        return $this->response->collection($metas, $transformer);
+        return $this->response->collection($result, $transformer);
     }
 
     public function show($id, Request $request)
     {
-        $meta = $this->repository->findById($id);
-
         if ($request->has('includes')) {
             $transformer = new $this->transformer(explode(',', $request->get('includes')));
         } else {
             $transformer = new $this->transformer(['schema']);
         }
 
-        return $this->response->item($meta, $transformer);
+        if ($request->has('metable_type') && $count_metas = count($ids = explode(',', $id)) > 1) {
+            $metas = $this->entity->where('metable_type', $request->get('metable_type'))->find($ids);
+
+            if (count($metas) < $count_metas)
+                throw new NotFoundException('Metas');
+
+            return $this->response->collection($metas, $transformer);
+        } else {
+            $meta = $this->repository->findById($id);
+    
+            return $this->response->item($meta, $transformer);
+        }
     }
 
     public function store(Request $request)
@@ -145,27 +142,26 @@ class MetaController extends ApiController
 
     protected function storeManyData(Request $request)
     {
-        $meta_values = $this->mapRequestData($request);
+        $meta_values = $request->get('meta');
         $schema_keys = array_keys($meta_values);
 
         $meta_schemas = MetaSchema::whereIn('key', $schema_keys)
-            ->where('type', Str::singular($request->get('metable_type')))
+            ->where('metable_type', $request->get('metable_type'))
             ->with('schemaRules')->get();
 
         $this->validator->isSchemaValid($request, $meta_schemas);
 
-        $meta_schemas = $this->mapMetaData($request, $meta_schemas, $meta_values);
+        $meta_datas = $this->mapMetaData($request, $meta_schemas, $meta_values);
 
-        $this->entity->insert($meta_schemas);
+        foreach ($meta_datas as $meta_data) {
+            $updating_item = $meta_data;
+
+            $meta_data['value'];
+            
+            $this->entity->updateOrCreate($meta_data, $updating_item);
+        }
 
         return $this->success();
-    }
-
-    protected function mapRequestData($request)
-    {
-        return collect($request->get('meta'))->mapWithKeys(function ($value, $key) {
-            return [$key => $value];
-        })->toArray();
     }
 
     protected function mapMetaData($request, $meta_schemas, $meta_values)
@@ -176,8 +172,6 @@ class MetaController extends ApiController
                 'metable_type' => $request['metable_type'],
                 'schema_id' => $item->id,
                 'value' => $meta_values[$item->key],
-                'created_at' => now(),
-                'updated_at' => now(),
             ];
         })->toArray();
     }
@@ -185,30 +179,23 @@ class MetaController extends ApiController
     public function batch(Request $request)
     {
         $meta = collect($request->all());
-        foreach ($meta as $item) {
-            $schema = MetaSchema::where('key', $item['key'])->where('type', $item['metable_type'])->firstOrFail();
-            Meta::updateOrCreate(
-                ['schema_id' => $schema->id, 'metable_id' => $item['metable_id'], 'metable_type' => $item['metable_type']],
-                ['schema_id' => $schema->id, 'metable_id' => $item['metable_id'], 'metable_type' => $item['metable_type'], 'value' => $item['value']]
-            );
-        }
+
+        DB::transaction(function () use ($meta) {
+            foreach ($meta as $item) {
+                $schema = MetaSchema::where('key', $item['key'])->where('metable_type', $item['metable_type'])->firstOrFail();
+                
+                $this->validator->isValidRule(
+                    [$schema->key => $item['value']],
+                    $schema->schemaRules->pluck('name')->toArray()
+                );
+
+                $this->entity->updateOrCreate(
+                    ['schema_id' => $schema->id, 'metable_id' => $item['metable_id'], 'metable_type' => $item['metable_type']],
+                    ['schema_id' => $schema->id, 'metable_id' => $item['metable_id'], 'metable_type' => $item['metable_type'], 'value' => $item['value']]
+                );
+            }
+        });
 
         return $this->success();
-    }
-
-    public function applyMetableId($request, $query)
-    {
-        if ($request->has('metable_id')) {
-            $query = $query->where('metable_id', $request->get('metable_id'));
-        }
-        return $query;
-    }
-
-    public function applyMetableType($request, $query)
-    {
-        if ($request->has('metable_type')) {
-            $query = $query->where('metable_type', $request->get('metable_type'));
-        }
-        return $query;
     }
 }
