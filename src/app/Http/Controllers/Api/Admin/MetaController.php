@@ -65,26 +65,17 @@ class MetaController extends ApiController
         return $this->response->collection($result, $transformer);
     }
 
-    public function show($id, Request $request)
-    {
-        if ($request->has('includes')) {
-            $transformer = new $this->transformer(explode(',', $request->get('includes')));
-        } else {
-            $transformer = new $this->transformer(['schema']);
-        }
+    public function show($id, Request $request)                                                         
+    {          
+        $this->validator->isValid($request, 'SHOW_META');   
 
-        if ($request->has('metable_type') && $count_metas = count($ids = explode(',', $id)) > 1) {
-            $metas = $this->entity->where('metable_type', $request->get('metable_type'))->find($ids);
-
-            if (count($metas) < $count_metas)
-                throw new NotFoundException('Metas');
-
-            return $this->response->collection($metas, $transformer);
-        } else {
-            $meta = $this->repository->findById($id);
-    
-            return $this->response->item($meta, $transformer);
-        }
+        $meta_ids = explode(',', $id);                                                                  
+        $result = $this->entity                                                                         
+            ->where('metable_type', $request->get('metable_type'))                                      
+            ->whereIn('metable_id', $meta_ids)                                                          
+            ->get();   
+                                                                                                                 
+        return $this->response->collection($result, new $this->transformer(['schema']));                
     }
 
     public function destroy($id)

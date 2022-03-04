@@ -26,7 +26,10 @@ class MetaValidator extends AbstractValidator
         'GET_META' => [
             'metable_id' => ['required'],
             'metable_type' => ['required'],
-        ]
+        ],
+        'SHOW_META' => [
+            'metable_type' => ['required'],
+        ],
     ];
 
     public function isSchemaValid(Request $request, $meta_schemas)

@@ -61,25 +61,6 @@ class MetaControllerTest extends TestCase
     /**
      * @test
      */
-    public function can_get_meta_detail()
-    {
-        $data = factory(Meta::class)->create([
-            'key' => factory(MetaSchema::class)->create()->key
-        ])->toArray();
-
-        unset($data['created_at']);
-        unset($data['updated_at']);
-
-        $response = $this->get("api/admin/metas/" . $data['id']);
-        $response->assertSuccessful();
-        $response->assertJson([
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * @test
-     */
     public function can_get_list_metas_by_route_detail()
     {
         $metable_type = 'fake_metable_type';
@@ -93,7 +74,7 @@ class MetaControllerTest extends TestCase
             unset($item['updated_at']);
         });
 
-        $metable_id = $data->pluck('id')->implode(',');
+        $metable_id = $data->pluck('metable_id')->implode(',');
         $data = $data->toArray();
 
         $response = $this->get("api/admin/metas/" . $metable_id . "?metable_type=" . $metable_type);
