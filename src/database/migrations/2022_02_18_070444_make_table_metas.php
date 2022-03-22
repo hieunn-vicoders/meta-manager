@@ -15,7 +15,7 @@ class MakeTableMetas extends Migration
     {
         Schema::create('metas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('value');
+            $table->string('value')->nullable();
             $table->string('key');
             $table->unsignedBigInteger('metable_id');
             $table->string('metable_type');
